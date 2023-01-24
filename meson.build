@@ -18,6 +18,7 @@ ThreadLinkLib = static_library(
 	include_directories: [
 		'/boot/system/develop/headers/private/shared',
 		'/boot/system/develop/headers/private/app',
+		'/boot/system/develop/headers/private/kernel/util',
 	],
 	dependencies: [
 		compiler.find_library('be'),
@@ -30,5 +31,6 @@ ThreadLink = declare_dependency(
 		'.',
 		'/boot/system/develop/headers/private/shared',
 		'/boot/system/develop/headers/private/app',
+		'/boot/system/develop/headers/private/kernel/util',
 	],
 )
