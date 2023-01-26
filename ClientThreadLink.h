@@ -19,8 +19,11 @@ class ClientThreadLinkConnection;
 
 class ClientThreadLink {
 private:
+	friend class ThreadLinkHolder;
+
 	ClientThreadLinkConnection *fConn;
-	BPrivate::PortLink fLink;
+	BPrivate::LinkSender fSender;
+	BPrivate::LinkReceiver fReceiver;
 	PortDeleter fPort;
 	DoublyLinkedListLink<ClientThreadLink> fListLink;
 
@@ -32,13 +35,13 @@ public:
 public:
 	ClientThreadLink(ClientThreadLinkConnection *conn, const BMessenger &serverMsgr);
 	~ClientThreadLink();
-
-	inline BPrivate::PortLink &Link() {return fLink;}
 };
+
 
 class ClientThreadLinkConnection {
 private:
 	friend class ClientThreadLink;
+	friend class ThreadLinkHolder;
 
 	pthread_mutex_t fLock = PTHREAD_MUTEX_INITIALIZER;
 	BMessenger fServerMsgr;
@@ -50,7 +53,14 @@ public:
 	~ClientThreadLinkConnection();
 	const BMessenger &Messenger() const {return fServerMsgr;}
 	void SetMessenger(const BMessenger &serverMsgr);
-
-	ClientThreadLink *GetLink();
 };
 
+
+class ThreadLinkHolder: public BPrivate::ServerLink {
+private:
+	ClientThreadLink *fLink;
+
+public:
+	ThreadLinkHolder(ClientThreadLinkConnection &conn);
+	~ThreadLinkHolder();
+};
